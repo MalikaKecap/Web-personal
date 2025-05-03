@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Location Tracker</h1>
+    <p>Klik tombol di bawah untuk melacak lokasi Anda:</p>
+    <button onclick="getLocation()">Lacak Lokasi</button>
+
+    <p id="status"></p>
+    <div id="map"></div>
+
+    <script>
+        // Function to get the user's location
+        function getLocation() {
+            const status = document.getElementById("status");
+            const map = document.getElementById("map");
+
+            // Check if Geolocation is supported/enabled
+            if (!navigator.geolocation) {
+                status.innerText = "Geolocation tidak didukung oleh browser Anda.";
+                return;
+            }
+
+            // Show a loading message
+            status.innerText = "Melacak lokasi...";
+
+            // Get the user's location
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Show the latitude and longitude
+                    status.innerText = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+                    // Display the map using Google Maps
+                    const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+                    map.innerHTML = `<iframe src="${mapUrl}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>`;
+                },
+                (error) => {
+                    // Handle errors
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            status.innerText = "Akses lokasi ditolak oleh pengguna.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            status.innerText = "Informasi lokasi tidak tersedia.";
+                            break;
+                        case error.TIMEOUT:
+                            status.innerText = "Permintaan lokasi melebihi batas waktu.";
+                            break;
+                        default:
+                            status.innerText = "Terjadi kesalahan saat melacak lokasi.";
+                            break;
+                    }
+                }
+            );
+        }
+    </script>
+</body>
+</html>
